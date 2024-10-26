@@ -1,0 +1,41 @@
+buildscript {
+    ext.kotlin_version = '1.9.10'
+    repositories {
+        maven{ url 'https://maven.aliyun.com/repository/google'} //修改
+        maven{ url 'https://maven.aliyun.com/repository/gradle-plugin'} //修改
+        maven{ url 'https://maven.aliyun.com/repository/public'} //修改
+        maven{ url 'https://maven.aliyun.com/repository/jcenter'} //修改
+
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        maven{ url 'https://maven.aliyun.com/repository/google'} //修改
+        maven{ url 'https://maven.aliyun.com/repository/gradle-plugin'} //修改
+        maven{ url 'https://maven.aliyun.com/repository/public'} //修改
+        maven{ url 'https://maven.aliyun.com/repository/jcenter'} //修改
+        google()
+        mavenCentral()
+    }
+}
+
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

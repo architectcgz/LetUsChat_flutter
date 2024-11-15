@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +17,7 @@ class ReceiveFileBloc extends Bloc<ReceiveFileEvent, ReceiveFileState> {
       int totalChunks) async {
     // 如果还没有初始化该文件的临时文件路径
     if (!_tempFilePaths.containsKey(fileName)) {
-      String tempFilePath = await _getTempFilePath(senderId,fileName);
+      String tempFilePath = await getTempFilePath(senderId,fileName);
       _tempFilePaths[fileName] = tempFilePath;
       _totalChunks[fileName] = totalChunks;
       // 确保目录存在
@@ -39,12 +40,74 @@ class ReceiveFileBloc extends Bloc<ReceiveFileEvent, ReceiveFileState> {
     }
   }
 
-  Future<String> _getTempFilePath(String senderId,String fileName) async {
-    // 生成一个临时文件路径
+  // Future<String> getTempFilePath(String senderId,String fileName) async {
+  //   // 生成一个临时文件路径
+  //   var tempDir = await getApplicationDocumentsDirectory();
+  //   fileTempDir = '${tempDir.path}/receivedFile/$senderId/$fileName';
+  //   bool exist = File(fileTempDir!).existsSync();
+  //   print("文件是否已存在: $exist");
+  //   var fileExt = fileName.indexOf(".");
+  //   int repeatTime = 1;
+  //   while(exist){
+  //     String repeatFilePath;
+  //     bool repeatFileExist;
+  //     //文件带拓展的情况
+  //     if(fileExt!= -1){
+  //       //测试是否已重复过
+  //       repeatFilePath =  '${tempDir.path}/receivedFile/$senderId/${fileName.substring(0,fileExt)}($repeatTime)${fileName.substring(fileExt)}';
+  //       repeatFileExist = File(repeatFilePath).existsSync();
+  //       //如果已经有像 photo(1).jpg这样重复过
+  //       if(repeatFileExist){
+  //         repeatTime++;//重复次数加1
+  //         fileTempDir = '${tempDir.path}/receivedFile/$senderId/${fileName.substring(0,fileExt)}($repeatTime)${fileName.substring(fileExt)}';
+  //       }else{
+  //         fileTempDir = repeatFilePath;
+  //       }
+  //     }else{//文件不带拓展
+  //       //测试是否已重复过
+  //       repeatFilePath =  '${tempDir.path}/receivedFile/$senderId/$fileName($repeatTime)';
+  //       repeatFileExist = File(repeatFilePath).existsSync();
+  //       //如果已经有像 photo(1).jpg这样重复过
+  //       if(repeatFileExist){
+  //         repeatTime++;//重复次数加1
+  //         fileTempDir = '${tempDir.path}/receivedFile/$senderId/$fileName($repeatTime)';
+  //       }else{
+  //         fileTempDir = repeatFilePath;
+  //       }
+  //     }
+  //     exist = File(fileTempDir!).existsSync();
+  //     print("更新后fileDir: ${fileTempDir},是否存在: $exist");
+  //   }
+  //   return fileTempDir!;
+  // }
+  Future<String> getTempFilePath(String senderId, String fileName) async {
+    // 获取应用的文档目录路径
     var tempDir = await getApplicationDocumentsDirectory();
-    fileTempDir = '${tempDir.path}/receivedFile/$senderId/$fileName';
-    return fileTempDir!;
+    String baseDir = '${tempDir.path}/receivedFile/$senderId';
+    String filePath = '$baseDir/$fileName';
+    int repeatTime = 0;
+
+    // 获取文件名和扩展名
+    String name = fileName;
+    String extension = '';
+    int dotIndex = fileName.lastIndexOf('.');
+    if (dotIndex != -1) {
+      name = fileName.substring(0, dotIndex);
+      extension = fileName.substring(dotIndex);
+    }
+
+    // 确保目录存在
+    await Directory(baseDir).create(recursive: true);
+
+    // 检查文件是否存在，若存在则生成新的文件路径
+    while (File(filePath).existsSync()) {
+      repeatTime++;
+      filePath = '$baseDir/$name($repeatTime)$extension';
+    }
+
+    return filePath;
   }
+
 
   ReceiveFileBloc() : super(ReceiveFileInitial()) {
 
@@ -70,7 +133,6 @@ class ReceiveFileBloc extends Bloc<ReceiveFileEvent, ReceiveFileState> {
         emit(FileSaved(
           fileDirPath: fileTempDir!
         ));
-        fileTempDir = null;
       }
     });
   }

@@ -134,6 +134,7 @@ class UserService {
     };
     final result = await dio.post("$serverBaseUrl/user/login/email",
         data: jsonEncode(jsonData));
+    print(result.data['code'] == 200);
     if (result.data['code'] == 200) {
       return result.data;
     } else {

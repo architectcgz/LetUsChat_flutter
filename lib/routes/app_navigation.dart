@@ -31,6 +31,7 @@ import 'package:let_us_chat/pages/receive_file_page.dart';
 import 'package:let_us_chat/pages/register/email_register_page.dart';
 import 'package:let_us_chat/pages/add/search_result_page.dart';
 import 'package:let_us_chat/pages/send_file_page.dart';
+import 'package:let_us_chat/pages/test_page.dart';
 import 'package:let_us_chat/pages/unimplemented_page.dart';
 import 'package:let_us_chat/pages/user_detail/avatar_detail_page.dart';
 import 'package:let_us_chat/pages/user_detail/location_selection_page.dart';
@@ -501,7 +502,14 @@ class AppNavigation {
             ),
           );
         },
-      )
+      ),
+      GoRoute(
+        path: "/testPage",
+        name: "testPage",
+        builder: (context, state) {
+          return TestPage();
+        },
+      ),
     ],
   );
 }

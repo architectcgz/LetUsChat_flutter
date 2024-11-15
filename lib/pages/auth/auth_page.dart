@@ -32,7 +32,7 @@ class AuthPage extends StatelessWidget {
         body: BlocConsumer<LoginBloc, LoginState>(
           listener: (context, state) {
             if (state is EmailLoginFailed) {
-              ShowWidgetUtil.showSnackBar(context, "登录失败,请重试:${state.message}");
+              ShowWidgetUtil.showSnackBar(context, "登录失败:${state.message}，请重试");
             } else if (state is EmailLoginSucceed) {
               ShowWidgetUtil.showSnackBar(context, "通过邮箱登录成功");
               //获取用户信息

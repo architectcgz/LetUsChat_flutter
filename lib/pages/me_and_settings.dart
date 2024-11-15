@@ -205,6 +205,23 @@ class _MeAndSettingsState extends State<MeAndSettings> {
                       GoRouter.of(context).pushNamed("settings");
                     },
                   ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ListTile(
+                    leading: const CircleAvatar(
+                      backgroundColor: Colors.blue,
+                      child: Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                      ),
+                    ),
+                    title: const Text('测试页面'),
+                    trailing: const Icon(Icons.arrow_forward_ios),
+                    onTap: () {
+                      GoRouter.of(context).pushNamed("testPage");
+                    },
+                  ),
                 ],
               )),
         );

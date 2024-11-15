@@ -33,6 +33,7 @@ class _ReceiveFilePageState extends State<ReceiveFilePage> {
   final _globalUser = serviceLocator.get<GlobalUserBloc>().globalUser!;
   double _progress = 0.0;
   String _fileStatus = "尚未开始接收";
+  String? _fileStoragePath;
   @override
   void initState() {
     _fileList = widget.fileList;
@@ -63,7 +64,8 @@ class _ReceiveFilePageState extends State<ReceiveFilePage> {
             });
           } else if (state is FileSaved) {
             setState(() {
-              _fileStatus = "文件已保存成功";
+              _fileStatus = "文件保存成功";
+              _fileStoragePath = "文件已保存到:${context.read<ReceiveFileBloc>().fileTempDir}";
             });
           }
         },
@@ -74,7 +76,7 @@ class _ReceiveFilePageState extends State<ReceiveFilePage> {
               style: const TextStyle(fontSize: 16),
             ),
             Text("文件校验码: ${widget.fileListHashCode},请注意与好友的文件校验码比对"),
-            context.read<ReceiveFileBloc>().fileTempDir!=null? Text("文件已保存到:${context.read<ReceiveFileBloc>().fileTempDir}"):const Text("文件尚未保存"),
+            _fileStoragePath!=null?Text(_fileStoragePath!):const SizedBox.shrink(),
             Padding(
               padding: const EdgeInsets.only(left: 8, right: 8),
               child: SizedBox(
@@ -129,7 +131,7 @@ class _ReceiveFilePageState extends State<ReceiveFilePage> {
                       _webSocketService.sendAcceptFileRequest(widget.friendUid,
                           _globalUser.userId, widget.fileListHashCode);
                     },
-              child: _accepted ? Text("已接受") : Text("接受"),
+              child: _accepted ? const Text("已接受") : const Text("接受"),
             )
           ],
         ),

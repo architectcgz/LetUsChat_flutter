@@ -4,8 +4,8 @@
 // const wsServerBaseUrl = "ws://localhost:5432/ws";
 // const serverBaseUrl = "http://192.168.45.126:8790/api";
 // const wsServerBaseUrl = "ws://192.168.45.126:5432/ws";
-const serverBaseUrl = "http://192.168.158.11:8790/api";
-const wsServerBaseUrl = "ws://192.168.158.11:5432/ws";
+const serverBaseUrl = "http://192.168.111.180:8790/api";
+const wsServerBaseUrl = "ws://192.168.111.180:5432/ws";
 const int heartBeatDuration = 50;
 
 const userSecureStorageKey = "secureUser:";

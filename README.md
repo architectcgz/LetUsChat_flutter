@@ -1,6 +1,8 @@
 # let_us_chat
 
-A new Flutter project.
+A Flutter chat project
+Support single chat and group chat
+Now group chat is not implemented yet
 
 ## Getting Started
 

@@ -12,7 +12,6 @@ import 'package:let_us_chat/blocs/global_user/global_user_bloc.dart';
 import 'package:let_us_chat/blocs/login/login_bloc.dart';
 import 'package:let_us_chat/blocs/navbar_bloc/navbar_bloc.dart';
 import 'package:let_us_chat/blocs/qr_code_bloc/qr_code_bloc.dart';
-import 'package:let_us_chat/blocs/receive_file/bloc/receive_file_bloc.dart';
 import 'package:let_us_chat/blocs/request_friend_info/request_friend_info_bloc.dart';
 import 'package:let_us_chat/blocs/send_file/send_file_bloc.dart';
 import 'package:let_us_chat/blocs/setting/settings_bloc.dart';
@@ -44,6 +43,7 @@ import 'package:path/path.dart';
 import '../blocs/chat/single_chat/single_chat_bloc.dart';
 import '../blocs/friend_info/friend_info_bloc.dart';
 import '../blocs/friend_request_list/friend_request_list_bloc.dart';
+import '../blocs/receive_file/receive_file_bloc.dart';
 import '../blocs/register/register_bloc.dart';
 import '../core/utils/injection_container.dart';
 import '../data/search_result_data.dart';
@@ -490,7 +490,7 @@ class AppNavigation {
         name: "receiveFile",
         builder: (context, state) {
           final data = state.extra as Map<String, dynamic>;
-          final fileList = data['fileList'] as List<Map<String, String>>;
+          final fileList = data['fileList'] as List<Map<String, dynamic>>;
           final friendUid = data['friendUid'] as String;
           final fileListHashCode = data['fileListHashCode'] as int;
           return BlocProvider.value(

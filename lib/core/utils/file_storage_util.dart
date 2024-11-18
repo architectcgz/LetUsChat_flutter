@@ -1,8 +1,10 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:gal/gal.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -42,7 +44,10 @@ class FileStorageUtil{
       await imagePermission.request();
     }
     final Dio dio = serviceLocator.get<Dio>();
+    final imagePath = '${Directory.systemTemp.path}/image_${DateTime.timestamp()}';
     var response = await dio.get(imageUrl,options: Options(responseType: ResponseType.bytes));
+    Gal.putImageBytes(Uint8List.fromList(response.data));
+
     final result = await ImageGallerySaver.saveImage(Uint8List.fromList(response.data),quality: 100,name: "image_${DateTime.timestamp()}") as Map<dynamic,dynamic>;
     return result['isSuccess'];
   }

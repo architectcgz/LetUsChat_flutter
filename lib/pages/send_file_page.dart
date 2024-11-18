@@ -53,8 +53,8 @@ class _SendFilePageState extends State<SendFilePage> {
     super.dispose();
   }
 
-  Future<bool> _sendFile(
-      int fileIndex,String fileName, int fileSize, Stream<List<int>> fileData) async {
+  Future<bool> _sendFile(int fileIndex, String fileName, int fileSize,
+      Stream<List<int>> fileData) async {
     _totalChunks = (fileSize / 32768).ceil();
 
     int counter = 0;
@@ -72,6 +72,7 @@ class _SendFilePageState extends State<SendFilePage> {
           var data1 = data.sublist(0, mid);
           print("超过64KB第一部分的大小: ${data1.length}");
           _webSocketService.sendFileSlice(
+              fileIndex,
               fileName,
               _globalUserBloc.globalUser!.userId,
               widget.friendUid,
@@ -81,8 +82,9 @@ class _SendFilePageState extends State<SendFilePage> {
               _totalChunks!);
           counter++;
           var data2 = data.sublist(mid);
-          print("超过64KB第一部分的大小: ${data2.length}");
+          print("超过64KB第二部分的大小: ${data2.length}");
           _webSocketService.sendFileSlice(
+              fileIndex,
               fileName,
               _globalUserBloc.globalUser!.userId,
               widget.friendUid,
@@ -92,6 +94,7 @@ class _SendFilePageState extends State<SendFilePage> {
               _totalChunks!);
         } else {
           _webSocketService.sendFileSlice(
+              fileIndex,
               fileName,
               _globalUserBloc.globalUser!.userId,
               widget.friendUid,
@@ -107,8 +110,9 @@ class _SendFilePageState extends State<SendFilePage> {
       }
       // 更新进度
       setState(() {
-        var progress =  counter/ _totalChunks!;
-        _wrapSelectedFileInfoList.selectedFileInfoList[fileIndex].sendProgress  = progress;
+        var progress = counter / _totalChunks!;
+        _wrapSelectedFileInfoList.selectedFileInfoList[fileIndex].sendProgress =
+            progress;
         print(progress);
       });
     }
@@ -127,7 +131,7 @@ class _SendFilePageState extends State<SendFilePage> {
       var file = _wrapSelectedFileInfoList.selectedFileInfoList[i];
       if (file.fileData != null) {
         final result =
-            await _sendFile(i,file.fileName, file.fileSize, file.fileData!);
+            await _sendFile(i, file.fileName, file.fileSize, file.fileData!);
         if (result) {
           file.fileStatus = SendFileStatus.succeed;
         } else {
@@ -172,6 +176,9 @@ class _SendFilePageState extends State<SendFilePage> {
                   ),
                   onPressed: () async {
                     print("点击了选择文件按钮");
+                    setState(() {
+                      _friendAcceptedRequest = false;
+                    });
                     try {
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles(
@@ -189,16 +196,17 @@ class _SendFilePageState extends State<SendFilePage> {
                         var files = result.files;
                         print(
                             "添加文件前文件列表的hashCode: ${_wrapSelectedFileInfoList.hashCode}");
-                        for (var file in files) {
-                          if (file.readStream != null) {
+                        for (int i =0;i<files.length;i++) {
+                          if (files[i].readStream != null) {
                             _wrapSelectedFileInfoList.selectedFileInfoList.add(
                                 FileToSend(
-                                    fileName: file.name,
-                                    fileSize: file.size,
+                                  fileIndex: i,
+                                    fileName: files[i].name,
+                                    fileSize: files[i].size,
                                     fileStatus: SendFileStatus.notSendYet,
-                                    fileData: file.readStream!));
+                                    fileData: files[i].readStream!));
                           } else {
-                            print("文件${file.name}无法读取,readStream为null");
+                            print("文件${files[i].name}无法读取,readStream为null");
                           }
                         }
                         setState(() {
@@ -346,7 +354,9 @@ class _SendFilePageState extends State<SendFilePage> {
                                           SizedBox(
                                             width: 100, // 设置进度条的宽度
                                             child: LinearProgressIndicator(
-                                              value: _wrapSelectedFileInfoList.selectedFileInfoList[index].sendProgress, // 替换为实际进度值
+                                              value: _wrapSelectedFileInfoList
+                                                  .selectedFileInfoList[index]
+                                                  .sendProgress, // 替换为实际进度值
                                             ),
                                           ),
                                           Text(

@@ -860,7 +860,7 @@ class _SingleChatPageState extends State<SingleChatPage>
           : SizedBox(
               height: _keyboardHeight,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 60, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
                 child: GridView.count(
                   crossAxisCount: 4, // 每行4个元素
                   mainAxisSpacing: 20, // 每行之间的垂直距离

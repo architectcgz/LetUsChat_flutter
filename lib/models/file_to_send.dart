@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:let_us_chat/core/constants/enums.dart';
 
 class FileToSend {
+  final int fileIndex;
   final String fileName;
   final int fileSize;
   SendFileStatus fileStatus;
@@ -10,12 +11,15 @@ class FileToSend {
   double sendProgress;
   String? errorMsg;
 
-  FileToSend(
-      {this.errorMsg,
-      required this.fileName,
-      required this.fileSize,
-      required this.fileStatus,
-      required this.fileData, this.sendProgress = 0,});
+  FileToSend({
+    this.errorMsg,
+    required this.fileIndex,
+    required this.fileName,
+    required this.fileSize,
+    required this.fileStatus,
+    required this.fileData,
+    this.sendProgress = 0,
+  });
   String getFixedFileSize() {
     double size = fileSize / (1000 * 1000);
     var selectedFileSize = size >= 1000

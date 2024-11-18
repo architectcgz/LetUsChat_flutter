@@ -12,7 +12,6 @@ import 'package:let_us_chat/blocs/friend_request_list/friend_request_list_bloc.d
 import 'package:let_us_chat/blocs/global_user/global_user_bloc.dart';
 import 'package:let_us_chat/blocs/login/login_bloc.dart';
 import 'package:let_us_chat/blocs/navbar_bloc/navbar_bloc.dart';
-import 'package:let_us_chat/blocs/receive_file/bloc/receive_file_bloc.dart';
 import 'package:let_us_chat/blocs/request_friend_info/request_friend_info_bloc.dart';
 import 'package:let_us_chat/blocs/register/register_bloc.dart';
 import 'package:let_us_chat/blocs/send_file/send_file_bloc.dart';
@@ -31,6 +30,7 @@ import 'package:let_us_chat/core/services/user_service.dart';
 import 'package:let_us_chat/repository/local/set_up_box_repo.dart';
 
 import '../../blocs/qr_code_bloc/qr_code_bloc.dart';
+import '../../blocs/receive_file/receive_file_bloc.dart';
 import '../websocket/websocket_service.dart';
 
 final GetIt serviceLocator = GetIt.instance;

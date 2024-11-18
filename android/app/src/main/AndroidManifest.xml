@@ -13,10 +13,10 @@
     <application
         android:label="let_us_chat"
         android:name="${applicationName}"
-
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
-        android:enableOnBackInvokedCallback="true">
+        android:enableOnBackInvokedCallback="true"
+        android:requestLegacyExternalStorage="true"> <!-- Gal: For saving to album in API 29 :Gal-->
 
         <activity
             android:name=".MainActivity"

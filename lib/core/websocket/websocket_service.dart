@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:let_us_chat/blocs/chat_list/chat_list_bloc.dart';
 import 'package:let_us_chat/blocs/contact_list/contact_list_bloc.dart';
-import 'package:let_us_chat/blocs/receive_file/bloc/receive_file_bloc.dart';
 import 'package:let_us_chat/blocs/send_file/send_file_bloc.dart';
 import 'package:let_us_chat/core/constants/constants.dart';
 import 'package:let_us_chat/core/dio_client.dart';
@@ -22,6 +21,7 @@ import 'package:let_us_chat/widgets/request_send_file_pop_up.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../blocs/global_user/global_user_bloc.dart';
+import '../../blocs/receive_file/receive_file_bloc.dart';
 import '../../models/message.dart';
 import '../../widgets/logout_pop_up.dart';
 import '../constants/enums.dart';
@@ -117,7 +117,7 @@ class WebSocketService {
   }
 
   void _handleReceiveSendFileReq(String friendUid, String friendName,
-      List<Map<String, String>> fileList, int fileListHashCode) {
+      List<Map<String, dynamic>> fileList, int fileListHashCode) {
     showDialog(
       context: AppNavigation.rootNavigatorKey.currentContext!,
       builder: (BuildContext context) {
@@ -264,8 +264,9 @@ class WebSocketService {
             var fileList = receivedMessage.data['fileList'] as List<dynamic>;
             var decodedList = fileList
                 .map((e) => {
-                      "fileName": e['fileName'] as String,
-                      "fileSize": e['fileSize'] as String
+                      "fileIndex": e['fileIndex'] ,
+                      "fileName": e['fileName'],
+                      "fileSize": e['fileSize']
                     })
                 .toList();
             _handleReceiveSendFileReq(
@@ -286,15 +287,17 @@ class WebSocketService {
                   int.parse(receivedMessage.data['fileListHashCode'])));
           break;
         case NettyCmdType.fileSlice:
-          print("收到了来自好友的文件slice");
+          //print("收到了来自好友的文件slice");
           var data = receivedMessage.data;
+          int fileIndex = data['fileIndex'];
           String fileName = data['fileName'] as String;
           String senderId = data['senderId'] as String;
           int chunkIndex = data['chunkIndex'];
           int totalChunks =  data['totalChunks'];
           List<int> chunkData = base64Decode(data['data']);
-          serviceLocator.get<ReceiveFileBloc>().add(ReceiveFileSlice(
+          serviceLocator.get<ReceiveFileBloc>().add(ReceiveFileSliceEvent(
               fileSlice: FileSlice(
+                  fileIndex: fileIndex,
                   fileName: fileName,
                   senderId: senderId,
                   chunkIndex: chunkIndex,
@@ -372,6 +375,7 @@ class WebSocketService {
   }
 
   void sendFileSlice(
+      int fileIndex,
       String fileName,
       String senderId,
       String receiverId,
@@ -387,6 +391,7 @@ class WebSocketService {
     var message = {
       "cmd": NettyCmdType.fileSlice.code,
       "data": {
+        "fileIndex":fileIndex,
         "fileName": fileName,
         "senderId": senderId,
         "receiverId": receiverId,
@@ -459,6 +464,7 @@ class WebSocketService {
         "fileListHashCode": fileListHashCode,
         "fileList": fileList.map((file) {
           return {
+            "fileIndex": file.fileIndex,
             'fileName': file.fileName,
             'fileSize': file.getFixedFileSize()
           };
